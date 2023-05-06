@@ -1,3 +1,23 @@
 from django.db import models
 
 # Create your models here.
+
+class User(models.Model):
+    username = models.CharField(max_length=255)
+
+
+class FriendRequests(models.Model):
+    REQUEST_TYPE = [
+        ("PENDING", "PENDING"),
+        ("ACCEPTED", "ACCEPTED"),
+        ("REJECTED", "REJECTED"),
+    ]
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    request_status = models.CharField(max_length=255, choices=REQUEST_TYPE)
+    created_at = models.DateTimeField(auto_now=True)
+
+class Friends(models.Model):
+    user1 = models.ForeignKey(User, on_delete=models.CASCADE)
+    user2 = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now=True)
