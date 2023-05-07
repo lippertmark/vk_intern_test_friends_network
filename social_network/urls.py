@@ -5,5 +5,4 @@ from social_network import views
 urlpatterns = [
     path('user/', view=views.user),
     
-    
 ]
