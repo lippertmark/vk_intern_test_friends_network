@@ -5,5 +5,6 @@ from social_network import views
 urlpatterns = [
     path('user/', view=views.user),
     path('send_request/', view=views.send_request),
-    
+    path('accept_request/', view=views.accept_request),
+    path('reject_request/', view=views.reject_request),
 ]
