@@ -45,6 +45,9 @@ def friend_requests(request: Request, id: int) -> Response:
         serializer = FriendRequestsSerializer(friend_request)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
     elif request.method == 'PUT':
+        if request.data['request_status'] == 'ACCEPTED':
+            Friends.objects.create(user1=friend_request.from_user, user2 = friend_request.to_user)
+            #Friends.objects.create(user1=friend_request.to_user, user2 = friend_request.from_user)
         #friend_request.request_status = request.data['request_status']
         #if friend_request.request_status == "PENDING":
         serializer = FriendRequestsSerializer(friend_request, data=request.data, partial=True)
@@ -60,12 +63,37 @@ def list_of_requests(request: Request, user_id:int):
     pass
 
 @api_view(['GET'])
-def list_of_friends(request: Request, user_id:int):
-    pass
+def list_of_friends(request: Request, user_id:int) -> Response:
+    user = User.objects.get(pk=user_id)
+
+    print(1)
+    if request.method == 'GET':
+        friends_user1 = Friends.objects.filter(user1=user_id)
+
+        print(2)
+        friends_user2 = Friends.objects.filter(user2=user_id)
+        print(3)
+        friends = friends_user1 | friends_user2
+        print(4)
+        serializer = FriendsSerializer(friends, many=True)
+        print(5)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+        
+    
+    
 
 @api_view(['GET', 'DELETE'])
 def friendship_status(request: Request, user_id:int, other_user_id:int):
     try:
-        friend = Friends.objects.get(user1=user_id, user2=other_user_id)
-    except FriendRequests.DoesNotExist:
-        return 
+        user_1 = User.objects.get(user_id)
+        user_2 = User.objects.get(other_user_id)
+        friend = Friends.objects.get(user1=user_1, user2=user_2)
+    except Friends.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    if request.method == 'GET':
+        pass
+    elif request.method == 'DELETE':
+        pass
