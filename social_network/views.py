@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
+import typing
 
 
 
@@ -32,4 +33,25 @@ def send_request(request: Request) -> Response:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
+@api_view(['GET','PUT'])
+def friend_requests(request: Request, id: int) -> Response:
+    
+    try:
+        friend_request = FriendRequests.objects.get(pk=id)
+    except FriendRequests.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'GET':
+        serializer = FriendRequestsSerializer(friend_request)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'PUT':
+        #friend_request.request_status = request.data['request_status']
+        #if friend_request.request_status == "PENDING":
+        serializer = FriendRequestsSerializer(friend_request, data=request.data, partial=True)
+        # TODO добавить функционал добавления в друзья
+        if serializer.is_valid():                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+            print('smth')
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
