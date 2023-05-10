@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
 import typing
-
+import json
 
 
 @api_view(['GET', 'POST'])
@@ -59,24 +59,26 @@ def friend_requests(request: Request, id: int) -> Response:
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
-def list_of_requests(request: Request, user_id:int):
-    pass
+def list_of_requests(request: Request, user_id:int)->Response:
+    if request.method == 'GET':
+        friends_sended = FriendRequests.objects.filter(from_user=user_id, )
+        friends_received = FriendRequests.objects.filter(to_user=user_id)
+        friends_sended_serializer = FriendRequestsSerializer(friends_sended, many=True)
+        friends_received_serializer = FriendRequestsSerializer(friends_received, many=True)
+        response = {
+            "sended":friends_sended_serializer.data,
+            "received":friends_received_serializer.data
+        }
+        return Response(data=response, status=status.HTTP_200_OK)
+    
 
 @api_view(['GET'])
 def list_of_friends(request: Request, user_id:int) -> Response:
-    user = User.objects.get(pk=user_id)
-
-    print(1)
     if request.method == 'GET':
         friends_user1 = Friends.objects.filter(user1=user_id)
-
-        print(2)
         friends_user2 = Friends.objects.filter(user2=user_id)
-        print(3)
         friends = friends_user1 | friends_user2
-        print(4)
         serializer = FriendsSerializer(friends, many=True)
-        print(5)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
