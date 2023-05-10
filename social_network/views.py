@@ -54,4 +54,18 @@ def friend_requests(request: Request, id: int) -> Response:
             serializer.save()
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
+@api_view(['GET'])
+def list_of_requests(request: Request, user_id:int):
+    pass
+
+@api_view(['GET'])
+def list_of_friends(request: Request, user_id:int):
+    pass
+
+@api_view(['GET', 'DELETE'])
+def friendship_status(request: Request, user_id:int, other_user_id:int):
+    try:
+        friend = Friends.objects.get(user1=user_id, user2=other_user_id)
+    except FriendRequests.DoesNotExist:
+        return 

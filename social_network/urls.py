@@ -6,14 +6,7 @@ urlpatterns = [
     path('users', view=views.user),
     path('friend_requests/<int:id>', view=views.friend_requests),
     path('friend_requests', view=views.send_request),
-    #path('reject_request/', view=views.reject_request),
+    path('users/<int:user_id>/friend_requests', view=views.list_of_requests),
+    path('users/<int:user_id>/friends', view=views.list_of_friends),
+    path('users/<int:user_id>/friends/<int:other_user_id>', view=views.friendship_status),  # тут два GET and DELETE
 ]
-'''
-user:
--id
--username
-friend_request:
--
-friend:
--
-'''
